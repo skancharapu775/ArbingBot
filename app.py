@@ -10,7 +10,7 @@ from update_arbs import refresh_arbs
 app = Flask(__name__)
 CORS(app)  # This enables CORS for all routes
 
-API_KEY = "4ea69ca031077470df2fe2b8e1b33b72"
+API_KEY = "b1112544946fe651cbb564457f73464c"
 REGIONS = ["us"]    # us = American sportsbooks
 MARKETS = ["h2h", "spreads"]   # h2h = moneyline (win/lose)
 BOOKMAKERS = []
