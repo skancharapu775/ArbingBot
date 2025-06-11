@@ -32,21 +32,22 @@ def listings():
     # ^^^ Update on frontend, per reload. 
     conn = sqlite3.connect('arbs.db')
     c = conn.cursor()
-    c.execute("SELECT event, outcomes, profit_margin, timestamp FROM arbs ORDER BY profit_margin DESC")
+    c.execute("SELECT event, outcomes, profit_margin, sport, timestamp FROM arbs ORDER BY profit_margin DESC")
     rows = c.fetchall()
     conn.close()
 
     result = []
-    for event, outcomes, margin, timestamp in rows:
+    for event, outcomes, margin, sport, timestamp in rows:
         result.append({
             'event': event,
             'outcomes': json.loads(outcomes),
             'profit_margin': margin,
+            'sport': sport,
             'timestamp': timestamp
         })
     return jsonify(result)
 
 if __name__ == "__main__":
-    refresh_arbs()
     create_table()
+    refresh_arbs()
     app.run(debug=True, port=5001)

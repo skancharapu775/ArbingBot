@@ -5,12 +5,11 @@ import LoadingScreen from '../components/LoadingScreen';
 import ArbList from '../components/ArbList';
 import ArbFilters from '../components/ArbsFilter';
 
-
 const Listings = () => {
     const [loading, setLoading] = useState(true);
     const [arbs, setArbs] = useState([]);
-    const [sportFilter, setSportFilter] = useState('');
-    const [sortBy, setSportBy] = useState('');
+    const [sportFilter, setSportFilter] = useState('all');
+    const [sortBy, setSortBy] = useState('profit');
 
     useEffect(() => {
         fetch('http://localhost:5001/api/listings')
@@ -25,30 +24,45 @@ const Listings = () => {
             console.error("Failed to load arbs", err);
             setLoading(false);
           });
-      }, []);
+    }, []);
+
+    // Filter and sort the arbs
+    const filteredArbs = arbs
+        .filter(arb => sportFilter === 'all' || arb.sport === sportFilter)
+        .sort((a, b) => {
+            if (sortBy === 'profit') {
+                return b.profit_margin - a.profit_margin;
+            } else {
+                return a.event.localeCompare(b.event);
+            }
+        });
     
     if (loading) return <LoadingScreen/>
-  return (
-    <div className='max-w-screen-xl mx-auto p-4 space-y-6 items-center'>
-        <div className="bg-base-100 border border-base-300 rounded-lg shadow px-5 py-6 flex flex-wrap justify-between items-center gap-4">
-            <div>
-                <h2 className="text-lg font-bold">
-                    🎯 {arbs.length} Arbitrage Opportunities
-                </h2>
-                <p className="text-sm text-base-content/60">Refreshed every two minutes</p>
+    return (
+        <div className='max-w-screen-xl mx-auto p-4 space-y-6 items-center'>
+            <div className="bg-base-100 border border-base-300 rounded-lg shadow px-5 py-6 flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <h2 className="text-lg font-bold">
+                        🎯 {filteredArbs.length} Arbitrage Opportunities
+                    </h2>
+                    <p className="text-sm text-base-content/60">Refreshed every two minutes</p>
+                </div>
+                <ArbFilters 
+                    sportFilter={sportFilter}
+                    setSportFilter={setSportFilter}
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                />
             </div>
-            <ArbFilters/>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 space-y-3">
+                {filteredArbs.length === 0 ? (
+                    <p>No arbitrage opportunities found.</p>
+                ) : (
+                    <ArbList arbs={filteredArbs}></ArbList>
+                )}
+            </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 space-y-3">
-            {arbs.length === 0 ? (
-                <p>No arbitrage opportunities found.</p>
-            ) : (
-                <ArbList arbs={arbs}></ArbList>
-                )
-            }
-        </div>
-    </div>
-
-  )
+    );
 }
+
 export default Listings

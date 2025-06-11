@@ -2,13 +2,13 @@ import requests
 import pandas as pd
 import time
 
-'''
-API_KEY = "4ea69ca031077470df2fe2b8e1b33b72"
+
+API_KEY = "b1112544946fe651cbb564457f73464c"
 REGIONS = ["us"]    # us = American sportsbooks
 MARKETS = ["h2h", "spreads"]   # h2h = moneyline (win/lose)
 BOOKMAKERS = []
 SPORTS = ["basketball_nba", "americanfootball_nfl", "baseball_mlb"] 
-'''
+
 # Replace with actual sport keys, or upcoming for all sports
 
 def fetch_odds_for_sports(api_key, regions, markets, bookmakers, sports):
@@ -33,6 +33,9 @@ def fetch_odds_for_sports(api_key, regions, markets, bookmakers, sports):
             data = response.json()
 
             if isinstance(data, list) and data:
+                # Add sport_key to each event
+                for event in data:
+                    event['sport_key'] = sport_key
                 all_odds.extend(data)
                 print(f"✅ Retrieved odds for: {sport_key} ({len(data)} events)")
             else:
@@ -80,7 +83,8 @@ def detect_arbitrage(event):
             "event": event['home_team'] + " vs " + event['away_team'],
             "outcomes": outcomes,
             "implied_prob": implied_prob_sum,
-            "profit_margin": round((1 - implied_prob_sum) * 100, 2)
+            "profit_margin": round((1 - implied_prob_sum) * 100, 2),
+            "sport": event['sport_key']  # Add the sport key from the event
         }
     return None
     
@@ -93,7 +97,7 @@ def get_arbitrage_opps(data):
     return arbitrage_opps
 
 def main():
-    data = fetch_odds_for_sports()
+    data = fetch_odds_for_sports(API_KEY, REGIONS, MARKETS, BOOKMAKERS, SPORTS)
 
     if not isinstance(data, list):
         print("Error: API did not return a list of events.")

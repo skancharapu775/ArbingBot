@@ -10,9 +10,9 @@ const ArbFilters = ({ sportFilter, setSportFilter, sortBy, setSortBy }) => {
         onChange={(e) => setSportFilter(e.target.value)}
       >
         <option value="all">All Sports</option>
-        <option value="basketball">Basketball</option>
-        <option value="football">Football</option>
-        <option value="baseball">Baseball</option>
+        <option value="basketball_nba">Basketball</option>
+        <option value="baseball_mlb">Baseball</option>
+        <option value="americanfootball_nfl">Football</option>
       </select>
 
       <select

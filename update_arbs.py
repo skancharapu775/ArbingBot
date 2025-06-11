@@ -16,9 +16,9 @@ def save_to_db(arbs):
 
     for arb in arbs:
         c.execute('''
-            INSERT INTO arbs (event, outcomes, profit_margin)
-            VALUES (?, ?, ?)
-        ''', (arb['event'], json.dumps(arb['outcomes']), arb['profit_margin']))
+            INSERT INTO arbs (event, outcomes, profit_margin, sport)
+            VALUES (?, ?, ?, ?)
+        ''', (arb['event'], json.dumps(arb['outcomes']), arb['profit_margin'], arb['sport']))
         #dumps turns the dict into json
 
     conn.commit()

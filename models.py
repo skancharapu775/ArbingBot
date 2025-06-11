@@ -10,6 +10,7 @@ def create_table():
             event TEXT,
             outcomes TEXT,
             profit_margin REAL,
+            sport TEXT,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     ''')
