@@ -13,7 +13,8 @@ SPORTS = ["basketball_nba", "americanfootball_nfl", "baseball_mlb"]
 
 @app.route('/listings', methods=['GET'])
 def listings():
-    odds = fetch_odds_for_sports()
+    # these are the default settings but they can be overridden by the user with filters
+    odds = fetch_odds_for_sports(API_KEY, REGIONS, MARKETS, BOOKMAKERS, SPORTS)
     arbitrage_opps = get_arbitrage_opps(odds)
     return jsonify(arbitrage_opps)
 

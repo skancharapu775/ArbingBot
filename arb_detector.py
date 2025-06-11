@@ -2,29 +2,30 @@ import requests
 import pandas as pd
 import time
 
+'''
 API_KEY = "4ea69ca031077470df2fe2b8e1b33b72"
 REGIONS = ["us"]    # us = American sportsbooks
 MARKETS = ["h2h", "spreads"]   # h2h = moneyline (win/lose)
 BOOKMAKERS = []
 SPORTS = ["basketball_nba", "americanfootball_nfl", "baseball_mlb"] 
-
+'''
 # Replace with actual sport keys, or upcoming for all sports
 
-def fetch_odds_for_sports():
+def fetch_odds_for_sports(api_key, regions, markets, bookmakers, sports):
     all_odds = []
 
-    for sport_key in SPORTS:
+    for sport_key in sports:
         url = f"https://api.the-odds-api.com/v4/sports/{sport_key}/odds"
 
-        params = {"apiKey": API_KEY}
+        params = {"apiKey": api_key}
         
-        # Conditionally add optional parameters if they are not empty
-        if REGIONS:
-            params["regions"] = REGIONS
-        if MARKETS:
-            params["markets"] = ",".join(MARKETS)
-        if BOOKMAKERS:
-            params["bookmakers"] = ",".join(BOOKMAKERS)
+        # If empty, don't add the parameter
+        if regions:
+            params["regions"] = regions
+        if markets:
+            params["markets"] = ",".join(markets)
+        if bookmakers:
+            params["bookmakers"] = ",".join(bookmakers)
 
         try:
             response = requests.get(url, params=params)
