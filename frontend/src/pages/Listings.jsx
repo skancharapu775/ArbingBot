@@ -17,7 +17,9 @@ const Listings = () => {
           .then(res => res.json())
           .then(data => {
             setArbs(data);
-            setLoading(false);
+            setTimeout(() => {
+                setLoading(false);
+              }, 700);
           })
           .catch(err => {
             console.error("Failed to load arbs", err);
@@ -33,11 +35,11 @@ const Listings = () => {
                 <h2 className="text-lg font-bold">
                     🎯 {arbs.length} Arbitrage Opportunities
                 </h2>
-                <p className="text-sm text-base-content/60">Refreshed live</p>
+                <p className="text-sm text-base-content/60">Refreshed every two minutes</p>
             </div>
             <ArbFilters/>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 space-y-3">
             {arbs.length === 0 ? (
                 <p>No arbitrage opportunities found.</p>
             ) : (

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { Coins } from 'lucide-react';
+import ToggleTheme from "./ToggleTheme";
 
 const Navbar = () => {
 
@@ -22,7 +23,8 @@ const Navbar = () => {
           </div>
 
           {/* Right Side: Links */}
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-3">
+            <ToggleTheme></ToggleTheme>
             <Link
                 to="/how-it-works"
                 className="btn btn-sm btn-outline text-blue-700 normal-case"

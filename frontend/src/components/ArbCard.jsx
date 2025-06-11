@@ -1,6 +1,7 @@
 import React from 'react';
 
 const ArbCard = ({ arb }) => {
+    const [date, time] = arb.timestamp.split(" ");
     return (
       <div className="card bg-base-200 border border-base-300 shadow-md">
         <div className="card-body space-y-2">
@@ -20,6 +21,10 @@ const ArbCard = ({ arb }) => {
                 </span>
               </div>
             ))}
+            <div className="flex items-center gap-2 text-sm">
+                <span className="text-success">🕔</span>
+                <span><strong>Detected at {time}</strong> on {date}</span>
+            </div>
           </div>
         </div>
       </div>
