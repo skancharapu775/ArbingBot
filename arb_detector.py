@@ -3,23 +3,28 @@ import pandas as pd
 import time
 
 API_KEY = "4ea69ca031077470df2fe2b8e1b33b72"
-SPORT = "upcoming"  # or "soccer_epl", "nba", "upcoming" etc.
-REGIONS = "us"    # us = American sportsbooks
-MARKETS = "h2h,spreads"   # h2h = moneyline (win/lose)
-
-# Replace with actual sport keys
+REGIONS = ["us"]    # us = American sportsbooks
+MARKETS = ["h2h", "spreads"]   # h2h = moneyline (win/lose)
+BOOKMAKERS = []
 SPORTS = ["basketball_nba", "americanfootball_nfl", "baseball_mlb"] 
+
+# Replace with actual sport keys, or upcoming for all sports
 
 def fetch_odds_for_sports():
     all_odds = []
 
     for sport_key in SPORTS:
         url = f"https://api.the-odds-api.com/v4/sports/{sport_key}/odds"
-        params = {
-            "apiKey": API_KEY,
-            "regions": REGIONS,
-            "markets": MARKETS,
-        }
+
+        params = {"apiKey": API_KEY}
+        
+        # Conditionally add optional parameters if they are not empty
+        if REGIONS:
+            params["regions"] = REGIONS
+        if MARKETS:
+            params["markets"] = ",".join(MARKETS)
+        if BOOKMAKERS:
+            params["bookmakers"] = ",".join(BOOKMAKERS)
 
         try:
             response = requests.get(url, params=params)
@@ -78,6 +83,13 @@ def detect_arbitrage(event):
         }
     return None
     
+def get_arbitrage_opps(data):
+    arbitrage_opps = []
+    for event in data:
+        arb = detect_arbitrage(event)
+        if arb:
+            arbitrage_opps.append(arb)
+    return arbitrage_opps
 
 def main():
     data = fetch_odds_for_sports()
@@ -87,6 +99,11 @@ def main():
         print("Full response:", data)
         return
 
+    arbitrage_opps = get_arbitrage_opps(data)
+
+    print(arbitrage_opps[0])
+
+    '''
     count = 0
     for event in data:
         arb = detect_arbitrage(event)
@@ -99,6 +116,7 @@ def main():
                 print(f"  Bet on {team} at {details['bookmaker']} (odds: {details['price']})")
     
     print(f"\n{count} events found!")
+    '''
 
 if __name__ == "__main__":
     main()
