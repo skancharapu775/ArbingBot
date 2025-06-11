@@ -20,7 +20,7 @@ SPORTS = ["basketball_nba", "baseball_mlb"] #for testing, exclude NFL, it's too 
 
 # Background Listings
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=refresh_arbs, trigger="interval", minutes=10)
+scheduler.add_job(func=refresh_arbs, trigger="interval", minutes=5)
 scheduler.start()
 
 @app.route('/api/listings', methods=['GET'])
@@ -46,6 +46,14 @@ def listings():
             'timestamp': timestamp
         })
     return jsonify(result)
+
+@app.route('/api/bookmakerlistings', methods=['GET'])
+def bookmakerlistings():
+    # bookmakers = ["betmgm", "betonlineag", "betrivers", "betus", "bovada", "caesars" "draftkings", "fanduel", "fanatics","lowvig", "mybookieag"]
+    BOOKMAKERS = request.args.get('bookmakers')
+    data = fetch_odds_for_sports(API_KEY, REGIONS, MARKETS, BOOKMAKERS, SPORTS)
+    arbs = get_arbitrage_opps(data)
+    return jsonify(arbs)
 
 if __name__ == "__main__":
     create_table()

@@ -59,6 +59,16 @@ def fetch_odds():
     data = response.json()
     return data
 
+def get_all_bookmakers():
+    sports_url = f"https://api.the-odds-api.com/v4/sports"
+    sports = requests.get(sports_url, params={"apiKey": API_KEY}).json()
+
+    all_bookmakers = []  # List of (key, title) tuples
+    for sport in sports:
+        odds_url = f"https://api.the-odds-api.com/v4/sports/{sport['key']}/odds"
+        params = {"apiKey": API_KEY, "regions": "us,us2,eu,uk,au"}
+    return all_bookmakers
+
 def detect_arbitrage(event):
     outcomes = {}
 
@@ -97,6 +107,8 @@ def get_arbitrage_opps(data):
     return arbitrage_opps
 
 def main():
+    data = get_all_bookmakers()
+    '''
     data = fetch_odds_for_sports(API_KEY, REGIONS, MARKETS, BOOKMAKERS, SPORTS)
 
     if not isinstance(data, list):
@@ -108,7 +120,6 @@ def main():
 
     print(arbitrage_opps[0])
 
-    '''
     count = 0
     for event in data:
         arb = detect_arbitrage(event)

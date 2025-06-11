@@ -51,22 +51,81 @@ const HowItWorks = () => {
             <section className="space-y-4">
                 <h2 className="text-2xl font-semibold text-primary">Example</h2>
                 <div className="bg-base-200 p-6 rounded-lg">
-                    <p className="mb-4">Let's say we have a tennis match between Player A and Player B:</p>
-                    <div className="grid grid-cols-2 gap-4">
+                    <p className="mb-4">Let's say we have a baseball game between the Los Angeles Angels and Oakland Athletics:</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div className="bg-base-100 p-4 rounded">
-                            <h4 className="font-semibold">Bookmaker 1</h4>
-                            <p>Player A: 2.10</p>
-                            <p>Player B: 1.90</p>
+                            <h4 className="font-semibold">FanDuel</h4>
+                            <p>Los Angeles Angels: 1.22</p>
+                            <p>Oakland Athletics: 4.20</p>
                         </div>
                         <div className="bg-base-100 p-4 rounded">
-                            <h4 className="font-semibold">Bookmaker 2</h4>
-                            <p>Player A: 1.95</p>
-                            <p>Player B: 2.05</p>
+                            <h4 className="font-semibold">DraftKings</h4>
+                            <p>Los Angeles Angels: 1.24</p>
+                            <p>Oakland Athletics: 3.92</p>
+                        </div>
+                        <div className="bg-base-100 p-4 rounded">
+                            <h4 className="font-semibold">BetMGM</h4>
+                            <p>Los Angeles Angels: 1.25</p>
+                            <p>Oakland Athletics: 3.90</p>
+                        </div>
+                        <div className="bg-base-100 p-4 rounded">
+                            <h4 className="font-semibold">MyBookie.ag</h4>
+                            <p>Los Angeles Angels: 1.18</p>
+                            <p>Oakland Athletics: 4.60</p>
+                        </div>
+                        <div className="bg-base-100 p-4 rounded">
+                            <h4 className="font-semibold">Bovada</h4>
+                            <p>Los Angeles Angels: 1.22</p>
+                            <p>Oakland Athletics: 4.00</p>
                         </div>
                     </div>
                     <p className="mt-4">
-                        By betting $100 on Player A at Bookmaker 1 and $102.44 on Player B at Bookmaker 2, you guarantee a profit of $7.56 regardless of who wins!
+                        By betting $100 on the Angels at MyBookie.ag (1.18) and $25.65 on the Athletics at FanDuel (4.20), you guarantee a profit of $4.35 regardless of who wins!
                     </p>
+                </div>
+            </section>
+
+            <section className="space-y-4">
+                <h2 className="text-2xl font-semibold text-primary">Supported Bookmakers</h2>
+                <div className="bg-base-200 p-6 rounded-lg">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div className="bg-base-100 p-4 rounded text-center">
+                            <h4 className="font-semibold">FanDuel</h4>
+                        </div>
+                        <div className="bg-base-100 p-4 rounded text-center">
+                            <h4 className="font-semibold">DraftKings</h4>
+                        </div>
+                        <div className="bg-base-100 p-4 rounded text-center">
+                            <h4 className="font-semibold">BetMGM</h4>
+                        </div>
+                        <div className="bg-base-100 p-4 rounded text-center">
+                            <h4 className="font-semibold">MyBookie.ag</h4>
+                        </div>
+                        <div className="bg-base-100 p-4 rounded text-center">
+                            <h4 className="font-semibold">Bovada</h4>
+                        </div>
+                        <div className="bg-base-100 p-4 rounded text-center">
+                            <h4 className="font-semibold">Caesars</h4>
+                        </div>
+                        <div className="bg-base-100 p-4 rounded text-center">
+                            <h4 className="font-semibold">PointsBet</h4>
+                        </div>
+                        <div className="bg-base-100 p-4 rounded text-center">
+                            <h4 className="font-semibold">BetRivers</h4>
+                        </div>
+                        <div className="bg-base-100 p-4 rounded text-center">
+                            <h4 className="font-semibold">WynnBet</h4>
+                        </div>
+                        <div className="bg-base-100 p-4 rounded text-center">
+                            <h4 className="font-semibold">Unibet</h4>
+                        </div>
+                        <div className="bg-base-100 p-4 rounded text-center">
+                            <h4 className="font-semibold">Barstool</h4>
+                        </div>
+                        <div className="bg-base-100 p-4 rounded text-center">
+                            <h4 className="font-semibold">FOX Bet</h4>
+                        </div>
+                    </div>
                 </div>
             </section>
 
