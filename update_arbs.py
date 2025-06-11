@@ -3,7 +3,7 @@ import json
 import sqlite3
 from arb_detector import *
 
-API_KEY = "b1112544946fe651cbb564457f73464c"
+API_KEY = "864f7d3a85ed040365fe9fc446902e79"
 REGIONS = ["us"]    # us = American sportsbooks
 MARKETS = ["h2h", "spreads"]   # h2h = moneyline (win/lose)
 BOOKMAKERS = []
