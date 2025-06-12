@@ -34,7 +34,12 @@ A Flask and React app for detecting arbitrage opportunities in sports betting.
    npm install -D tailwindcss postcss autoprefixer daisyui@latest
    ```
 
-4. Start the development server:
+4. Install react-hot-toast:
+   ```bash
+   npm install react-hot-toast
+   ```
+
+5. Start the development server:
    ```bash
    npm run dev
    ```
