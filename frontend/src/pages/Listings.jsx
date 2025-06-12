@@ -11,20 +11,32 @@ const Listings = () => {
     const [arbs, setArbs] = useState([]);
     const [sportFilter, setSportFilter] = useState('all');
     const [sortBy, setSortBy] = useState('profit');
+    const [lastUpdated, setLastUpdated] = useState(null);
+
+    const fetchArbs = () => {
+        setLoading(true);
+        fetch('http://localhost:5001/api/listings')
+        .then(res => res.json())
+        .then(data => {
+          setArbs(data);
+          setLastUpdated(new Date());
+          setTimeout(() => {
+              setLoading(false);
+            }, 700);
+        })
+        .catch(err => {
+          console.error("Failed to load arbs", err);
+          setLoading(false);
+        });
+    }
 
     useEffect(() => {
-        fetch('http://localhost:5001/api/listings')
-          .then(res => res.json())
-          .then(data => {
-            setArbs(data);
-            setTimeout(() => {
-                setLoading(false);
-            }, 700);
-          })
-          .catch(err => {
-            console.error("Failed to load arbs", err);
-            setLoading(false);
-          });
+        fetchArbs();
+        const interval = setInterval(() => {
+            fetchArbs(); 
+        }, 180000); // Note to self: units in ms. Set to 3 mins.
+    
+        return () => clearInterval(interval);
     }, []);
 
     const handleBookmakerApply = (bookmakers) => {
@@ -65,7 +77,11 @@ const Listings = () => {
                     <h2 className="text-lg font-bold">
                         🎯 {filteredArbs.length} Arbitrage Opportunities
                     </h2>
-                    <p className="text-sm text-base-content/60">Refreshed every two minutes</p>
+                    {lastUpdated && (
+                        <p className="text-sm text-base-content/60">
+                            Last refreshed at {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                    )}
                 </div>
                 <ArbFilters 
                     sportFilter={sportFilter}
