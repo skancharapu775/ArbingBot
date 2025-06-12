@@ -44,7 +44,7 @@ const Listings = () => {
     useEffect(() => {
         const interval = setInterval(() => {
           setTick(t => t + 1); 
-        }, 20000); // forces a re-render every 20 seconds)
+        }, 300000); // forces a re-render every 5 minutes
     })
 
     useEffect(() => {
