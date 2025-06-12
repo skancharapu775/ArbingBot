@@ -13,6 +13,7 @@ const Listings = () => {
     const [sportFilter, setSportFilter] = useState('all');
     const [sortBy, setSortBy] = useState('profit');
     const [lastUpdated, setLastUpdated] = useState(null);
+    const [tick, setTick] = useState(0);
 
     const fetchArbs = () => {
         setLoading(true);
@@ -39,6 +40,12 @@ const Listings = () => {
         }
         return false
     }
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+          setTick(t => t + 1); 
+        }, 20000); // forces a re-render every 20 seconds)
+    })
 
     useEffect(() => {
         fetchArbs();
@@ -98,7 +105,7 @@ const Listings = () => {
                         🎯 {filteredArbs.length} Arbitrage Opportunities
                     </h2>
                     {lastUpdated && (
-                        <p className={`text-md ${ checkTimeElapsed()
+                        <p className={`text-md ${ Date.now() - lastUpdated.getTime() > 20000
                                 ? 'text-red-500'
                                 : 'text-base-content/60'
                             }`}>
@@ -111,7 +118,7 @@ const Listings = () => {
                     setSportFilter={setSportFilter}
                 />
                 <button 
-                    className="btn btn-primary"
+                    className="btn btn-sm btn-primary"
                     onClick={() => window.location.reload()}
                 >Refresh</button>
                 <BookmakerFilter onApply={handleBookmakerApply} />
