@@ -6,15 +6,23 @@ import sqlite3
 import json
 from apscheduler.schedulers.background import BackgroundScheduler
 from update_arbs import refresh_arbs
+import requests
+import time
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)  # This enables CORS for all routes
 
-API_KEY = "864f7d3a85ed040365fe9fc446902e79"
+@app.route('/', defaults={'path': ''}, methods=['OPTIONS'])
+@app.route('/<path:path>', methods=['OPTIONS'])
+def handle_options(path):
+    return '', 200
+
+API_KEY = "a80d02c6475d4516feb8202d5196f03b"
 REGIONS = ["us"]    # us = American sportsbooks
 MARKETS = ["h2h", "spreads"]   # h2h = moneyline (win/lose)
 BOOKMAKERS = []
-SPORTS = ["basketball_nba", "baseball_mlb"] #for testing, exclude NFL, it's too much. 
+SPORTS = ["basketball_nba", "baseball_mlb"]
 # SPORTS = ["basketball_nba", "americanfootball_nfl", "baseball_mlb"] 
 
 
@@ -36,24 +44,40 @@ def listings():
     rows = c.fetchall()
     conn.close()
 
-    result = []
+    results = []
     for event, outcomes, margin, sport, timestamp in rows:
-        result.append({
+        results.append({
             'event': event,
             'outcomes': json.loads(outcomes),
             'profit_margin': margin,
             'sport': sport,
             'timestamp': timestamp
         })
-    return jsonify(result)
+    print(results)
+    return jsonify(results)
+    
 
 @app.route('/api/bookmakerlistings', methods=['GET'])
 def bookmakerlistings():
-    # bookmakers = ["betmgm", "betonlineag", "betrivers", "betus", "bovada", "caesars" "draftkings", "fanduel", "fanatics","lowvig", "mybookieag"]
-    BOOKMAKERS = request.args.get('bookmakers')
-    data = fetch_odds_for_sports(API_KEY, REGIONS, MARKETS, BOOKMAKERS, SPORTS)
+    bookmakers = request.args.get('bookmakers', '').split(',')
+    print("Received bookmakers:", bookmakers)
+    data = fetch_odds_for_sports(API_KEY, REGIONS, MARKETS, bookmakers, SPORTS)
+    print("Fetched odds data length:", len(data) if isinstance(data, list) else "Not a list")
     arbs = get_arbitrage_opps(data)
-    return jsonify(arbs)
+    print("Generated arbs length:", len(arbs) if isinstance(arbs, list) else "Not a list")
+
+    results = []
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    for arb in arbs:
+        results.append({
+            'event': arb['event'],
+            'outcomes': arb['outcomes'],
+            'profit_margin': arb['profit_margin'],
+            'sport': arb['sport'],
+            'timestamp': current_time
+        })
+    print("Processed results length:", len(results))
+    return jsonify(results)
 
 if __name__ == "__main__":
     create_table()

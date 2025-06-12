@@ -4,6 +4,7 @@ import AnimatedDots from '../components/AnimatedDots';
 import LoadingScreen from '../components/LoadingScreen';
 import ArbList from '../components/ArbList';
 import ArbFilters from '../components/ArbsFilter';
+import BookmakerFilter from '../components/BookmakerFilter';
 
 const Listings = () => {
     const [loading, setLoading] = useState(true);
@@ -18,13 +19,32 @@ const Listings = () => {
             setArbs(data);
             setTimeout(() => {
                 setLoading(false);
-              }, 700);
+            }, 700);
           })
           .catch(err => {
             console.error("Failed to load arbs", err);
             setLoading(false);
           });
     }, []);
+
+    const handleBookmakerApply = (bookmakers) => {
+        console.log("Selected bookmakers:", bookmakers);
+        setLoading(true);
+        const url = `http://localhost:5001/api/bookmakerlistings?bookmakers=${bookmakers.join(',')}`;
+        console.log("Fetching from URL:", url);
+        fetch(url)
+          .then(res => res.json())
+          .then(data => {
+            console.log("Received data:", data);
+            setArbs(data);
+            console.log("Updated arbs state:", data);
+            setLoading(false);
+          })
+          .catch(err => {
+            console.error("Failed to load filtered arbs", err);
+            setLoading(false);
+          });
+    };
 
     // Filter and sort the arbs
     const filteredArbs = arbs
@@ -50,9 +70,8 @@ const Listings = () => {
                 <ArbFilters 
                     sportFilter={sportFilter}
                     setSportFilter={setSportFilter}
-                    sortBy={sortBy}
-                    setSortBy={setSortBy}
                 />
+                <BookmakerFilter onApply={handleBookmakerApply} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 space-y-3">
                 {filteredArbs.length === 0 ? (

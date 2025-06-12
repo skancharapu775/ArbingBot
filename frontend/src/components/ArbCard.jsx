@@ -1,7 +1,7 @@
 import React from 'react';
 
 const ArbCard = ({ arb }) => {
-    const [date, time] = arb.timestamp.split(" ");
+    const [date, time] = arb.timestamp ? arb.timestamp.split(" ") : ["N/A", "N/A"];
     return (
       <div className="card bg-base-200 border border-base-300 shadow-md">
         <div className="card-body space-y-2">

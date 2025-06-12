@@ -3,7 +3,7 @@ import pandas as pd
 import time
 
 
-API_KEY = "864f7d3a85ed040365fe9fc446902e79"
+API_KEY = "a80d02c6475d4516feb8202d5196f03b"
 REGIONS = ["us"]    # us = American sportsbooks
 MARKETS = ["h2h", "spreads"]   # h2h = moneyline (win/lose)
 BOOKMAKERS = []
