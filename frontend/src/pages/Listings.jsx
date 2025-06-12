@@ -5,6 +5,7 @@ import LoadingScreen from '../components/LoadingScreen';
 import ArbList from '../components/ArbList';
 import ArbFilters from '../components/ArbsFilter';
 import BookmakerFilter from '../components/BookmakerFilter';
+import toast from 'react-hot-toast';
 
 const Listings = () => {
     const [loading, setLoading] = useState(true);
@@ -30,10 +31,29 @@ const Listings = () => {
         });
     }
 
+    const checkTimeElapsed = () => {
+        const now = Date.now();
+        const diffMs = now - lastUpdated.getTime();
+        if (diffMs >= 180000) {
+            return true
+        }
+        return false
+    }
+
     useEffect(() => {
         fetchArbs();
         const interval = setInterval(() => {
-            fetchArbs(); 
+            const stat = checkTimeElapsed()
+            if (stat) {
+                toast((t, {duration: Infinity}) => (
+                    <span>
+                      Arbs may be stale. Refresh now!
+                      <button onClick={() => toast.dismiss(t.id)}>
+                        Dismiss
+                      </button>
+                    </span>
+                  ));
+            }
         }, 180000); // Note to self: units in ms. Set to 3 mins.
     
         return () => clearInterval(interval);
@@ -78,7 +98,10 @@ const Listings = () => {
                         🎯 {filteredArbs.length} Arbitrage Opportunities
                     </h2>
                     {lastUpdated && (
-                        <p className="text-sm text-base-content/60">
+                        <p className={`text-md ${ checkTimeElapsed()
+                                ? 'text-red-500'
+                                : 'text-base-content/60'
+                            }`}>
                             Last refreshed at {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                     )}
@@ -87,6 +110,10 @@ const Listings = () => {
                     sportFilter={sportFilter}
                     setSportFilter={setSportFilter}
                 />
+                <button 
+                    className="btn btn-primary"
+                    onClick={() => window.location.reload()}
+                >Refresh</button>
                 <BookmakerFilter onApply={handleBookmakerApply} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 space-y-3">
