@@ -1,9 +1,23 @@
-import requests
-import pandas as pd
+import os
 import time
 
+import pandas as pd
+import requests
+from dotenv import load_dotenv
 
-API_KEY = "a80d02c6475d4516feb8202d5196f03b"
+
+def get_api_key():
+    """Return the Odds API key, or exit if ODDS_API_KEY is missing."""
+    load_dotenv()
+    key = os.getenv("ODDS_API_KEY", "").strip()
+    if not key:
+        raise SystemExit(
+            "Error: ODDS_API_KEY is not set. "
+            "Copy .env.example to .env and set ODDS_API_KEY to your Odds API key."
+        )
+    return key
+
+
 REGIONS = ["us"]    # us = American sportsbooks
 MARKETS = ["h2h", "spreads"]   # h2h = moneyline (win/lose)
 BOOKMAKERS = []
@@ -51,7 +65,7 @@ def fetch_odds_for_sports(api_key, regions, markets, bookmakers, sports):
 def fetch_odds():
     url = f"https://api.the-odds-api.com/v4/sports/{SPORT}/odds" # toggle sport and sport keys
     params = {
-        "apiKey": API_KEY,
+        "apiKey": get_api_key(),
         "regions": REGIONS,
         "markets": MARKETS,
     }
@@ -61,12 +75,12 @@ def fetch_odds():
 
 def get_all_bookmakers():
     sports_url = f"https://api.the-odds-api.com/v4/sports"
-    sports = requests.get(sports_url, params={"apiKey": API_KEY}).json()
+    sports = requests.get(sports_url, params={"apiKey": get_api_key()}).json()
 
     all_bookmakers = []  # List of (key, title) tuples
     for sport in sports:
         odds_url = f"https://api.the-odds-api.com/v4/sports/{sport['key']}/odds"
-        params = {"apiKey": API_KEY, "regions": "us,us2,eu,uk,au"}
+        params = {"apiKey": get_api_key(), "regions": "us,us2,eu,uk,au"}
     return all_bookmakers
 
 def detect_arbitrage(event):

@@ -18,7 +18,6 @@ CORS(app)  # This enables CORS for all routes
 def handle_options(path):
     return '', 200
 
-API_KEY = "a80d02c6475d4516feb8202d5196f03b"
 REGIONS = ["us"]    # us = American sportsbooks
 MARKETS = ["h2h", "spreads"]   # h2h = moneyline (win/lose)
 BOOKMAKERS = []
@@ -34,7 +33,7 @@ scheduler.start()
 @app.route('/api/listings', methods=['GET'])
 def listings():
     # these are the default settings but they can be overridden by the user with filters
-    # odds = fetch_odds_for_sports(API_KEY, REGIONS, MARKETS, BOOKMAKERS, SPORTS)
+    # odds = fetch_odds_for_sports(get_api_key(), REGIONS, MARKETS, BOOKMAKERS, SPORTS)
     # arbitrage_opps = get_arbitrage_opps(odds)
     # return jsonify(arbitrage_opps) 
     # ^^^ Update on frontend, per reload. 
@@ -61,7 +60,7 @@ def listings():
 def bookmakerlistings():
     bookmakers = request.args.get('bookmakers', '').split(',')
     print("Received bookmakers:", bookmakers)
-    data = fetch_odds_for_sports(API_KEY, REGIONS, MARKETS, bookmakers, SPORTS)
+    data = fetch_odds_for_sports(get_api_key(), REGIONS, MARKETS, bookmakers, SPORTS)
     print("Fetched odds data length:", len(data) if isinstance(data, list) else "Not a list")
     arbs = get_arbitrage_opps(data)
     print("Generated arbs length:", len(arbs) if isinstance(arbs, list) else "Not a list")
@@ -80,6 +79,7 @@ def bookmakerlistings():
     return jsonify(results)
 
 if __name__ == "__main__":
+    get_api_key()
     create_table()
     refresh_arbs()
     app.run(debug=True, port=5001)

@@ -3,4 +3,4 @@ flask-cors
 requests
 pandas
 apscheduler
-sqlite3
+python-dotenv

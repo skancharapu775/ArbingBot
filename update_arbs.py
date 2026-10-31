@@ -3,7 +3,6 @@ import json
 import sqlite3
 from arb_detector import *
 
-API_KEY = "a80d02c6475d4516feb8202d5196f03b"
 REGIONS = ["us"]    # us = American sportsbooks
 MARKETS = ["h2h", "spreads"]   # h2h = moneyline (win/lose)
 BOOKMAKERS = []
@@ -26,7 +25,7 @@ def save_to_db(arbs):
 
 def refresh_arbs():
     # Your actual fetch config
-    data = fetch_odds_for_sports(API_KEY, REGIONS, MARKETS, BOOKMAKERS, SPORTS)
+    data = fetch_odds_for_sports(get_api_key(), REGIONS, MARKETS, BOOKMAKERS, SPORTS)
     arbs = get_arbitrage_opps(data)
     save_to_db(arbs)
 
