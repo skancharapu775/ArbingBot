@@ -109,6 +109,13 @@ def fetch_odds_for_sports(api_key, regions, markets, bookmakers, sports):
 
 
 def detect_arbitrage(event):
+    """Return an arbitrage opportunity for one event, or None.
+
+    Decimal odds convert to implied probability as 1/odds. For each outcome,
+    keep the best (highest) odds across bookmakers. An arb exists when the
+    sum of those implied probabilities is less than 1. The profit margin is
+    1 minus that sum, returned here as a percentage.
+    """
     outcomes = {}
 
     for bookmaker in event["bookmakers"]:
@@ -138,7 +145,25 @@ def detect_arbitrage(event):
     return None
 
 
+def calculate_stakes(total_stake, odds):
+    """Split a total stake across outcomes so each pays out the same amount.
+
+    For a total stake S, the stake on outcome i is
+    S * (1/odds_i) / sum_of_implied_probs. Stakes are returned in the same
+    order as odds.
+    """
+    implied = [1 / price for price in odds]
+    implied_sum = sum(implied)
+    return [total_stake * probability / implied_sum for probability in implied]
+
+
 def get_arbitrage_opps(data):
+    """Collect arbitrage opportunities from a list of Odds API events.
+
+    Each event is checked with detect_arbitrage: best price per outcome,
+    implied probability 1/odds, and an arb only when those probabilities
+    sum to less than 1.
+    """
     arbitrage_opps = []
     for event in data:
         arb = detect_arbitrage(event)
