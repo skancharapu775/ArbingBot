@@ -1,6 +1,5 @@
 flask
 flask-cors
 requests
-pandas
 apscheduler
 python-dotenv
