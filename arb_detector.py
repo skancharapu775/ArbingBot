@@ -108,41 +108,55 @@ def fetch_odds_for_sports(api_key, regions, markets, bookmakers, sports):
     return all_odds
 
 
+def _line(outcome):
+    point = outcome.get("point")
+    if point is None:
+        return None
+    return abs(float(point))
+
+
 def detect_arbitrage(event):
-    """Return an arbitrage opportunity for one event, or None.
+    """Return arbitrage opportunities for one event, one per market.
 
-    Decimal odds convert to implied probability as 1/odds. For each outcome,
-    keep the best (highest) odds across bookmakers. An arb exists when the
-    sum of those implied probabilities is less than 1. The profit margin is
-    1 minus that sum, returned here as a percentage.
+    Decimal odds convert to implied probability as 1/odds. Moneylines and
+    spreads are scored separately, and a spread is only compared with the
+    same point. Within a market, keep the best price per outcome. An arb
+    exists when those implied probabilities sum to less than 1. The profit
+    margin is 1 minus that sum, returned as a percentage.
     """
-    outcomes = {}
-
-    for bookmaker in event["bookmakers"]:
-        for market in bookmaker["markets"]:
-            for outcome in market["outcomes"]:
+    groups = {}
+    for bookmaker in event.get("bookmakers", []):
+        for market in bookmaker.get("markets", []):
+            market_key = market.get("key") or "h2h"
+            for outcome in market.get("outcomes", []):
+                group = groups.setdefault((market_key, _line(outcome)), {})
                 name = outcome["name"]
                 price = outcome["price"]
-                if name not in outcomes or price > outcomes[name]["price"]:
-                    outcomes[name] = {
+                current = group.get(name)
+                if current is None or price > current["price"]:
+                    picked = {
                         "bookmaker": bookmaker["title"],
                         "price": price,
+                        "market": market_key,
                     }
+                    if outcome.get("point") is not None:
+                        picked["point"] = outcome["point"]
+                    group[name] = picked
 
-    if len(outcomes) < 2:
-        return None
-
-    implied_prob_sum = sum(1 / o["price"] for o in outcomes.values())
-
-    if implied_prob_sum < 1:
-        return {
-            "event": event["home_team"] + " vs " + event["away_team"],
-            "outcomes": outcomes,
-            "implied_prob": implied_prob_sum,
-            "profit_margin": round((1 - implied_prob_sum) * 100, 2),
-            "sport": event["sport_key"],
-        }
-    return None
+    found = []
+    for outcomes in groups.values():
+        if len(outcomes) < 2:
+            continue
+        implied_prob_sum = sum(1 / o["price"] for o in outcomes.values())
+        if implied_prob_sum < 1:
+            found.append({
+                "event": event["home_team"] + " vs " + event["away_team"],
+                "outcomes": outcomes,
+                "implied_prob": implied_prob_sum,
+                "profit_margin": round((1 - implied_prob_sum) * 100, 2),
+                "sport": event["sport_key"],
+            })
+    return found
 
 
 def calculate_stakes(total_stake, odds):
@@ -160,15 +174,13 @@ def calculate_stakes(total_stake, odds):
 def get_arbitrage_opps(data):
     """Collect arbitrage opportunities from a list of Odds API events.
 
-    Each event is checked with detect_arbitrage: best price per outcome,
-    implied probability 1/odds, and an arb only when those probabilities
-    sum to less than 1.
+    Each market is checked on its own: best price per outcome, implied
+    probability 1/odds, and an arb only when those probabilities sum to
+    less than 1.
     """
     arbitrage_opps = []
     for event in data:
-        arb = detect_arbitrage(event)
-        if arb:
-            arbitrage_opps.append(arb)
+        arbitrage_opps.extend(detect_arbitrage(event))
     return arbitrage_opps
 
 
@@ -190,14 +202,15 @@ def main():
 
     count = 0
     for event in data:
-        arb = detect_arbitrage(event)
-        if arb:
+        for arb in detect_arbitrage(event):
             count += 1
             print("\n💰 Arbitrage Found!")
             print(f"Match: {arb['event']}")
             print(f"Profit Margin: {arb['profit_margin']}%")
             for team, details in arb["outcomes"].items():
-                print(f"  Bet on {team} at {details['bookmaker']} (odds: {details['price']})")
+                point = details.get("point")
+                side = team if point is None else f"{team} {point}"
+                print(f"  Bet on {side} at {details['bookmaker']} (odds: {details['price']})")
 
     print(f"\n{count} events found!")
 
